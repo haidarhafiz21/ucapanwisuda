@@ -11,14 +11,14 @@
 
   /* Urutan foto: 0 = hero, 1..6 = album, 7 = penutup */
   const PHOTOS = [
-    { n: 8, pos: '50% 30%', cap: 'Wisuda Sarjana 2026', alt: 'Berliana memegang map ijazah UIN Madura sambil tersenyum di tangga' },
-    { n: 7, pos: '50% 48%', cap: 'Sarjana Pendidikan', alt: 'Berliana berpose ceria di dekat lift dengan selempang nama' },
-    { n: 4, pos: '50% 34%', cap: 'pose anggun, dikit', alt: 'Berliana berdiri anggun dengan kebaya merah muda dan selempang wisuda' },
-    { n: 3, pos: '50% 40%', cap: 'ngaca dulu, biar makin cakep', alt: 'Berliana tersenyum di depan cermin dengan dinding roster oranye' },
+    { n: 5, pos: '50% 38%', cap: 'terharu dikit, boleh dong', alt: 'Berliana dengan tangan di dada, tersenyum haru' },
+    { n: 7, pos: '50% 48%', cap: 'nunggu lift sambil nari dikit', alt: 'Berliana berpose ceria di dekat lift dengan selempang nama' },
+    { n: 4, pos: '50% 34%', cap: 'kalem di luar, heboh di dalam', alt: 'Berliana berdiri anggun dengan kebaya merah muda dan selempang wisuda' },
+    { n: 3, pos: '50% 40%', cap: 'ngaca dulu, cakep: terkonfirmasi', alt: 'Berliana tersenyum di depan cermin dengan dinding roster oranye' },
     { n: 1, pos: '50% 32%', cap: 'satu aja udah cakep, ini dua', alt: 'Berliana dan pantulannya di kaca sambil memegang buket bunga' },
-    { n: 6, pos: '50% 45%', cap: 'naik tangga menuju sukses', alt: 'Berliana berdiri di tangga sambil memegang pegangan' },
-    { n: 2, pos: '50% 48%', cap: 'cek kaca: aman, cantik', alt: 'Pantulan Berliana di cermin wastafel' },
-    { n: 5, pos: '50% 38%', cap: 'alhamdulillah, akhirnya!', alt: 'Berliana dengan tangan di dada, tersenyum haru' },
+    { n: 6, pos: '50% 45%', cap: 'pelan-pelan, asal sampai', alt: 'Berliana berdiri di tangga sambil memegang pegangan' },
+    { n: 2, pos: '50% 48%', cap: 'wastafel kampus jadi studio dadakan', alt: 'Pantulan Berliana di cermin wastafel' },
+    { n: 8, pos: '50% 30%', cap: 'ijazah aman, hati lega', alt: 'Berliana memegang map ijazah UIN Madura sambil tersenyum di tangga' },
   ];
   const small = (p) => `foto/${p.n}-s.jpg`;
   const full = (p) => `foto/${p.n}.jpg`;
@@ -433,19 +433,62 @@
 
   function startMain() {
     hero.classList.add('go');
+    // cap S.Pd mendarat di detik ~3.45 (lihat animasi .stamp di CSS)
     setTimeout(() => {
       hero.classList.add('shake');
       Sound.boing();
       const st = $('.stamp', hero);
       const c = centerOf(st);
       FX.sparks(c.x, c.y, 10);
-    }, 1500);
+      FX.cannons(80);
+    }, 3450);
     hero.addEventListener('animationend', (e) => {
       if (e.animationName === 'shake') hero.classList.remove('shake');
     });
-    setTimeout(() => FX.cannons(80), 400);
+    if (window.matchMedia && matchMedia('(min-width: 900px)').matches) {
+      setTimeout(() => say('hai! scroll ke bawah, ya'), 4700);
+    }
     startObserver();
   }
+
+  /* --- Hero: ketuk foto = hujan hati, ketuk Si Toga = dia ngomong --- */
+  const heroPhoto = $('#heroPhoto');
+  heroPhoto.addEventListener('click', (e) => {
+    const p = pointFrom(e, heroPhoto);
+    FX.hearts(p.x, p.y, 12);
+    Sound.pop();
+  });
+  const heroToga = $('#heroToga');
+  const heroBub = $('#heroBub');
+  const heroFace = $('.toga', heroToga);
+  const TOGA_LINES = [
+    'hai! aku Si Toga',
+    'scroll ke bawah, ya',
+    'ada balon nunggu dipecahin',
+    'jangan lupa traktirannya, hehe',
+    'selamat ya, Berliana!',
+  ];
+  let togaLine = 0;
+  let bubT = 0;
+  let heroFaceT = 0;
+  function say(msg) {
+    heroBub.textContent = msg;
+    heroBub.classList.remove('show');
+    void heroBub.offsetWidth;
+    heroBub.classList.add('show');
+    clearTimeout(bubT);
+    bubT = setTimeout(() => heroBub.classList.remove('show'), 2600);
+  }
+  heroToga.addEventListener('click', () => {
+    heroFace.classList.add('happy');
+    clearTimeout(heroFaceT);
+    heroFaceT = setTimeout(() => heroFace.classList.remove('happy'), 700);
+    const c = centerOf(heroToga);
+    FX.hearts(c.x, c.y - 10, 8);
+    Sound.pop();
+    say(TOGA_LINES[togaLine % TOGA_LINES.length]);
+    togaLine += 1;
+  });
 
   /* --- Foto hero & penutup: ketuk = hujan hati --- */
   $$('.tap-love').forEach((el) => {
