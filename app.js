@@ -11,14 +11,14 @@
 
   /* Urutan foto: 0 = hero, 1..6 = album, 7 = penutup */
   const PHOTOS = [
-    { n: 5, pos: '50% 38%', cap: 'terharu dikit, boleh dong', alt: 'Berliana dengan tangan di dada, tersenyum haru' },
-    { n: 7, pos: '50% 48%', cap: 'nunggu lift sambil nari dikit', alt: 'Berliana berpose ceria di dekat lift dengan selempang nama' },
-    { n: 4, pos: '50% 34%', cap: 'kalem di luar, heboh di dalam', alt: 'Berliana berdiri anggun dengan kebaya merah muda dan selempang wisuda' },
-    { n: 3, pos: '50% 40%', cap: 'ngaca dulu, cakep: terkonfirmasi', alt: 'Berliana tersenyum di depan cermin dengan dinding roster oranye' },
-    { n: 1, pos: '50% 32%', cap: 'satu aja udah cakep, ini dua', alt: 'Berliana dan pantulannya di kaca sambil memegang buket bunga' },
-    { n: 6, pos: '50% 45%', cap: 'pelan-pelan, asal sampai', alt: 'Berliana berdiri di tangga sambil memegang pegangan' },
-    { n: 2, pos: '50% 48%', cap: 'wastafel kampus jadi studio dadakan', alt: 'Pantulan Berliana di cermin wastafel' },
-    { n: 8, pos: '50% 30%', cap: 'ijazah aman, hati lega', alt: 'Berliana memegang map ijazah UIN Madura sambil tersenyum di tangga' },
+    { n: 5, pos: '50% 38%', alt: 'Berliana dengan tangan di dada, tersenyum haru' },
+    { n: 7, pos: '50% 48%', alt: 'Berliana berpose ceria di dekat lift dengan selempang nama' },
+    { n: 4, pos: '50% 34%', alt: 'Berliana berdiri anggun dengan kebaya merah muda dan selempang wisuda' },
+    { n: 3, pos: '50% 40%', alt: 'Berliana tersenyum di depan cermin dengan dinding roster oranye' },
+    { n: 1, pos: '50% 32%', alt: 'Berliana dan pantulannya di kaca sambil memegang buket bunga' },
+    { n: 6, pos: '50% 45%', alt: 'Berliana berdiri di tangga sambil memegang pegangan' },
+    { n: 2, pos: '50% 48%', alt: 'Pantulan Berliana di cermin wastafel' },
+    { n: 8, pos: '50% 30%', alt: 'Berliana memegang map ijazah UIN Madura sambil tersenyum di tangga' },
   ];
   const small = (p) => `foto/${p.n}-s.jpg`;
   const full = (p) => `foto/${p.n}.jpg`;
@@ -373,16 +373,18 @@
     const grid = $('#grid');
     const tilt = [-3, 2.5, -1.5, 3, -2.5, 1.8];
     const frag = document.createDocumentFragment();
+    const TAPE = ['tape', '', 'tape tape-rose', '', 'tape tape-gold', ''];
+    const STICKER = ['', 'heart', '', '', 'star', ''];
     PHOTOS.slice(1, 7).forEach((p, k) => {
       const idx = k + 1;
       const wrap = document.createElement('div');
       wrap.className = 'pol';
       wrap.style.setProperty('--d', `${(k % 2) * 110}ms`);
       wrap.innerHTML =
-        `<button class="polaroid${k % 3 === 0 ? ' tape' : ''}" type="button" style="--r:${tilt[k]}deg" aria-label="Buka foto: ${p.cap}">` +
-          `<img src="${small(p)}" srcset="${small(p)} 560w, ${full(p)} 1200w" sizes="(min-width: 720px) 280px, 44vw" ` +
-          `width="560" height="700" loading="lazy" decoding="async" alt="${p.alt}" style="--pos:${p.pos}">` +
-          `<span class="cap hand">${p.cap}</span>` +
+        `<button class="polaroid nocap ${TAPE[k]}" type="button" style="--r:${tilt[k]}deg" aria-label="Buka foto ${idx}: ${p.alt}">` +
+          `<span class="ph"><img src="${small(p)}" srcset="${small(p)} 560w, ${full(p)} 1200w" sizes="(min-width: 720px) 280px, 44vw" ` +
+          `width="560" height="700" loading="lazy" decoding="async" alt="${p.alt}" style="--pos:${p.pos}"></span>` +
+          (STICKER[k] ? `<span class="pstick ${STICKER[k]}" aria-hidden="true"></span>` : '') +
         `</button>`;
       wrap.firstElementChild.addEventListener('click', (e) => openLightbox(idx, e.currentTarget));
       frag.appendChild(wrap);
@@ -390,6 +392,36 @@
     grid.appendChild(frag);
   };
   buildGrid();
+
+  /* --- Album di laptop: foto miring 3D mengikuti kursor + kilau --- */
+  if (!REDUCE && window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    $$('#grid .polaroid').forEach((el) => {
+      let raf = 0;
+      let last = null;
+      const apply = () => {
+        raf = 0;
+        if (!last) return;
+        const r = el.getBoundingClientRect();
+        const x = Math.min(0.5, Math.max(-0.5, (last.clientX - r.left) / r.width - 0.5));
+        const y = Math.min(0.5, Math.max(-0.5, (last.clientY - r.top) / r.height - 0.5));
+        el.style.setProperty('--ry', `${(x * 16).toFixed(2)}deg`);
+        el.style.setProperty('--rx', `${(-y * 16).toFixed(2)}deg`);
+        el.style.setProperty('--gx', `${((x + 0.5) * 100).toFixed(1)}%`);
+        el.style.setProperty('--gy', `${((y + 0.5) * 100).toFixed(1)}%`);
+      };
+      el.addEventListener('pointerenter', () => el.classList.add('tilting'));
+      el.addEventListener('pointermove', (e) => {
+        last = e;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+      el.addEventListener('pointerleave', () => {
+        last = null;
+        el.classList.remove('tilting');
+        el.style.setProperty('--rx', '0deg');
+        el.style.setProperty('--ry', '0deg');
+      });
+    });
+  }
 
   let ioStarted = false;
   const startObserver = () => {
@@ -425,6 +457,8 @@
           FX.rain(90);
         } else {
           el.classList.add('in');
+          // prangko "dicapkan" ke surat
+          if (el.classList.contains('paper')) setTimeout(() => Sound.pop(), 900);
         }
       });
     }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
@@ -449,6 +483,100 @@
       setTimeout(() => say('hai! scroll ke bawah, ya'), 4700);
     }
     startObserver();
+    startExtras();
+  }
+
+  /* =========================================================
+     TAMBAHAN: garis progres, pita ikut scroll, Si Toga pemandu
+     ========================================================= */
+  function startExtras() {
+    // 1) garis progres emas di atas layar
+    const prog = $('#progress');
+    const bar = $('span', prog);
+    let progRaf = 0;
+    const updateProg = () => {
+      progRaf = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      bar.style.transform = `scaleX(${p.toFixed(4)})`;
+    };
+    prog.classList.add('on');
+    updateProg();
+    window.addEventListener('scroll', () => { if (!progRaf) progRaf = requestAnimationFrame(updateProg); }, { passive: true });
+    window.addEventListener('resize', () => { if (!progRaf) progRaf = requestAnimationFrame(updateProg); }, { passive: true });
+
+    // 2) pita "Happy Graduation" makin ngebut saat di-scroll, lalu pelan lagi
+    const track = $('.marquee-track');
+    const mq = !REDUCE && track && track.getAnimations ? track.getAnimations()[0] : null;
+    if (mq) {
+      let lastY = window.scrollY;
+      let lastT = performance.now();
+      let boost = 0;
+      let mqRaf = 0;
+      const settle = () => {
+        boost *= 0.92;
+        if (boost < 0.02) boost = 0;
+        mq.playbackRate = 1 + boost;
+        mqRaf = boost > 0 ? requestAnimationFrame(settle) : 0;
+      };
+      window.addEventListener('scroll', () => {
+        const now = performance.now();
+        const v = Math.abs(window.scrollY - lastY) / Math.max(16, now - lastT);
+        lastY = window.scrollY;
+        lastT = now;
+        boost = Math.min(5, Math.max(boost, v * 4));
+        if (!mqRaf) mqRaf = requestAnimationFrame(settle);
+      }, { passive: true });
+    }
+
+    // 3) Si Toga mini di pojok: muncul setelah hero, menyapa di tiap bagian
+    const guide = $('#guide');
+    const bub = $('#guideBub');
+    const face = $('.toga', guide);
+    let bubTimer = 0;
+    let faceTimer = 0;
+    let tap = 0;
+    const TAPS = ['hehe, geli', 'aku Si Toga, salam kenal!', 'semangat scroll-nya!', 'selamat ya, Berliana!'];
+    const talk = (msg) => {
+      if (!msg) return;
+      bub.textContent = msg;
+      bub.classList.remove('show');
+      void bub.offsetWidth;
+      bub.classList.add('show');
+      clearTimeout(bubTimer);
+      bubTimer = setTimeout(() => bub.classList.remove('show'), 2800);
+    };
+    guide.hidden = false;
+    guide.addEventListener('click', () => {
+      face.classList.add('happy');
+      clearTimeout(faceTimer);
+      faceTimer = setTimeout(() => face.classList.remove('happy'), 700);
+      guide.classList.remove('hop');
+      void guide.offsetWidth;
+      guide.classList.add('hop');
+      const c = centerOf(guide);
+      FX.hearts(c.x, c.y - 16, 7);
+      Sound.pop();
+      talk(TAPS[tap % TAPS.length]);
+      tap += 1;
+    });
+    if (!('IntersectionObserver' in window)) {
+      guide.classList.add('on');
+      return;
+    }
+    new IntersectionObserver(([en]) => {
+      guide.classList.toggle('on', !en.isIntersecting);
+      if (en.isIntersecting) bub.classList.remove('show');
+    }, { threshold: 0.15 }).observe(hero);
+    const greeted = new Set();
+    const sio = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting || greeted.has(en.target)) return;
+        greeted.add(en.target);
+        talk(en.target.dataset.guide);
+      });
+    }, { rootMargin: '-40% 0px -40% 0px' });
+    $$('[data-guide]').forEach((el) => sio.observe(el));
   }
 
   /* --- Hero: ketuk foto = hujan hati, ketuk Si Toga = dia ngomong --- */
@@ -618,14 +746,31 @@
      LIGHTBOX
      ========================================================= */
   const lb = $('#lb');
+  const lbFig = $('.lb-fig', lb);
   const lbImg = $('#lbImg');
-  const lbCap = $('#lbCap');
   const lbCount = $('#lbCount');
   const lbClose = $('.lb-close', lb);
   lbImg.draggable = false;
   let cur = 0;
   let opener = null;
   let lbTimer = 0;
+  let lbOpen = false;
+  const EASE_OUT = 'cubic-bezier(.2, .8, .2, 1)';
+  const canFlip = !REDUCE && typeof lbFig.animate === 'function';
+
+  /* polaroid di album untuk foto ke-idx (album berisi PHOTOS[1..6]) */
+  const thumbOf = (idx) => (idx >= 1 && idx <= 6 ? $(`#grid .pol:nth-child(${idx}) .polaroid`) : null);
+
+  /* transform yang menempatkan foto besar tepat di atas polaroid kecilnya */
+  const flipTransform = (el) => {
+    const a = el.getBoundingClientRect();
+    const b = lbFig.getBoundingClientRect();
+    if (!a.width || !b.width) return null;
+    const dx = a.left + a.width / 2 - (b.left + b.width / 2);
+    const dy = a.top + a.height / 2 - (b.top + b.height / 2);
+    const r = parseFloat(getComputedStyle(el).getPropertyValue('--r')) || 0;
+    return `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${(a.width / b.width).toFixed(4)}) rotate(${r}deg)`;
+  };
 
   const showPhoto = (i) => {
     cur = (i + PHOTOS.length) % PHOTOS.length;
@@ -633,7 +778,6 @@
     const want = cur;
     lbImg.src = small(p);
     lbImg.alt = p.alt;
-    lbCap.textContent = p.cap;
     lbCount.textContent = `${cur + 1} / ${PHOTOS.length}`;
     const hi = new Image();
     hi.onload = () => { if (cur === want && !lb.hidden) lbImg.src = full(p); };
@@ -648,23 +792,64 @@
 
   function openLightbox(i, from) {
     clearTimeout(lbTimer);
+    lbFig.getAnimations?.().forEach((a) => a.cancel());
     opener = from || null;
+    lbOpen = true;
     showPhoto(i);
     lb.hidden = false;
     html.classList.add('noscroll');
     requestAnimationFrame(() => requestAnimationFrame(() => lb.classList.add('show')));
     Sound.pop();
     lbClose.focus({ preventScroll: true });
+
+    if (!canFlip || !from) return;
+    // tunggu foto siap (maks. 250ms) supaya ukuran akhirnya benar, lalu "terbang" dari album
+    lbFig.style.opacity = '0';
+    const ready = lbImg.decode ? lbImg.decode().catch(() => {}) : Promise.resolve();
+    Promise.race([ready, new Promise((r) => setTimeout(r, 250))]).then(() => {
+      requestAnimationFrame(() => {
+        lbFig.style.opacity = '';
+        if (!lbOpen) return;
+        const t = flipTransform(from);
+        if (t) lbFig.animate([{ transform: t }, { transform: 'none' }], { duration: 560, easing: EASE_OUT });
+      });
+    });
   }
   const closeLightbox = () => {
-    if (lb.hidden) return;
+    if (lb.hidden || !lbOpen) return;
+    lbOpen = false;
+    let wait = 260;
+    const target = thumbOf(cur);
+    if (canFlip && target) {
+      const rect = target.getBoundingClientRect();
+      if (rect.bottom > 0 && rect.top < window.innerHeight) {
+        const t = flipTransform(target);
+        if (t) {
+          lbFig.animate([{ transform: 'none' }, { transform: t }], { duration: 380, easing: 'cubic-bezier(.5, 0, .2, 1)', fill: 'forwards' });
+          wait = 380;
+        }
+      }
+    }
     lb.classList.remove('show');
     html.classList.remove('noscroll');
     clearTimeout(lbTimer);
-    lbTimer = setTimeout(() => { lb.hidden = true; lbImg.removeAttribute('src'); }, 260);
+    lbTimer = setTimeout(() => {
+      lb.hidden = true;
+      lbImg.removeAttribute('src');
+      lbFig.getAnimations?.().forEach((a) => a.cancel());
+    }, wait);
     if (opener) opener.focus({ preventScroll: true });
   };
-  const step = (d) => { showPhoto(cur + d); Sound.tick(); };
+  const step = (d) => {
+    showPhoto(cur + d);
+    Sound.tick();
+    if (canFlip) {
+      lbFig.animate(
+        [{ transform: `translateX(${d * 46}px) rotate(${d * 2}deg)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
+        { duration: 340, easing: EASE_OUT }
+      );
+    }
+  };
 
   lbClose.addEventListener('click', closeLightbox);
   $('.lb-nav.prev', lb).addEventListener('click', () => step(-1));

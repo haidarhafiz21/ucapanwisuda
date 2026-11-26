@@ -24,6 +24,7 @@
 <body>
 
 <canvas id="fx" aria-hidden="true"></canvas>
+<div id="progress" class="progress" aria-hidden="true"><span></span></div>
 
 <button id="soundBtn" class="sound-btn" type="button" aria-label="Matikan suara" hidden>
   <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -123,7 +124,7 @@
   </div>
 
   <!-- Lempar toga -->
-  <section class="sec toss">
+  <section class="sec toss" data-guide="ayo lempar toganya!">
     <p class="kicker reveal">No. 01 · Tradisi</p>
     <h3 class="sec-title reveal">Tradisi wajib:<br><em>lempar toga!</em></h3>
     <p class="sec-text reveal">Pencet si Toga sebanyak yang kamu mau. Tenang, dia nggak gampang pusing.</p>
@@ -134,7 +135,7 @@
   </section>
 
   <!-- Balon -->
-  <section class="sec balloons">
+  <section class="sec balloons" data-guide="pecahin semua, ya!">
     <p class="kicker reveal">No. 02 · Fakta lucu</p>
     <h3 class="sec-title reveal">Pecahin <em>balonnya!</em></h3>
     <p class="sec-text reveal">Tiap balon nyimpen fakta seputar perjuangan Berliana. Pecahin semua, ya.</p>
@@ -143,7 +144,7 @@
   </section>
 
   <!-- Album -->
-  <section class="sec album">
+  <section class="sec album" data-guide="foto favoritmu yang mana?">
     <p class="kicker reveal">No. 03 · Galeri</p>
     <h3 class="sec-title reveal">Album <em>kecil</em></h3>
     <p class="sec-text hand reveal">ketuk fotonya biar keliatan lebih jelas</p>
@@ -151,7 +152,7 @@
   </section>
 
   <!-- Surat -->
-  <section class="sec letter-sec">
+  <section class="sec letter-sec" data-guide="baca pelan-pelan, ya">
     <p class="kicker reveal">No. 04 · Surat</p>
     <h3 class="sec-title reveal">Sepucuk <em>surat</em></h3>
     <article class="paper reveal">
@@ -170,7 +171,7 @@
   </section>
 
   <!-- Kartu gosok -->
-  <section class="sec scratch-sec">
+  <section class="sec scratch-sec" data-guide="gosok yang semangat!">
     <p class="kicker reveal">No. 05 · Doa</p>
     <h3 class="sec-title reveal">Gosok-gosok <em>dikit</em></h3>
     <p class="sec-text reveal">Ada doa kecil yang ngumpet di baliknya.</p>
@@ -185,13 +186,12 @@
   </section>
 
   <!-- Penutup -->
-  <section class="sec finale" id="finale">
+  <section class="sec finale" id="finale" data-guide="yeay, sampai akhir!">
     <div class="finale-pic reveal">
-      <button class="polaroid tape tap-love" type="button" aria-label="Kirim hati untuk foto ini" style="--r:2.5deg">
-        <img src="foto/8-s.jpg" srcset="foto/8-s.jpg 560w, foto/8.jpg 1200w" sizes="(min-width: 720px) 340px, 70vw"
+      <button class="polaroid nocap tape tap-love" type="button" aria-label="Kirim hati untuk foto ini" style="--r:2.5deg">
+        <span class="ph"><img src="foto/8-s.jpg" srcset="foto/8-s.jpg 560w, foto/8.jpg 1200w" sizes="(min-width: 720px) 340px, 70vw"
              width="560" height="700" loading="lazy" decoding="async"
-             alt="Berliana memegang map ijazah UIN Madura sambil tersenyum di tangga" style="--pos:50% 30%">
-        <span class="cap hand">ijazah aman, hati lega</span>
+             alt="Berliana memegang map ijazah UIN Madura sambil tersenyum di tangga" style="--pos:50% 30%"></span>
       </button>
     </div>
     <p class="kicker reveal">No. 06 · Penutup</p>
@@ -217,13 +217,17 @@
   </button>
   <figure class="lb-fig">
     <img id="lbImg" alt="">
-    <figcaption id="lbCap" class="hand"></figcaption>
   </figure>
   <button class="lb-nav next" type="button" aria-label="Foto berikutnya">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
   <p id="lbCount" class="lb-count"></p>
 </div>
+
+<button id="guide" class="guide" type="button" aria-label="Si Toga, ketuk untuk menyapa" hidden>
+  <span id="guideBub" class="guide-bub" aria-live="polite"></span>
+  <svg class="toga" viewBox="0 0 120 104" aria-hidden="true"><path d="M28 44v22c0 11 14 19 32 19s32-8 32-19V44L60 56z" fill="#a3305d"/><path d="M60 10 116 33 60 56 4 33z" fill="#6e1630"/><path d="M60 10 116 33 104 33 60 15 16 33 4 33z" fill="#fff" opacity=".1"/><path d="M60 33 100 41v30" fill="none" stroke="#d9a441" stroke-width="3.5" stroke-linecap="round"/><path d="M96 69h8l2.5 15h-13z" fill="#d9a441"/><circle cx="60" cy="33" r="4.5" fill="#d9a441"/><g class="tg-eyes"><ellipse cx="48" cy="67" rx="3.8" ry="4.8" fill="#1d0a10"/><ellipse cx="72" cy="67" rx="3.8" ry="4.8" fill="#1d0a10"/><circle cx="49.3" cy="65.2" r="1.4" fill="#fff"/><circle cx="73.3" cy="65.2" r="1.4" fill="#fff"/></g><g class="tg-happy" fill="none" stroke="#1d0a10" stroke-width="3" stroke-linecap="round"><path d="M43.5 69q4.5-7 9 0M67.5 69q4.5-7 9 0"/></g><ellipse cx="39" cy="75" rx="5.5" ry="3.2" fill="#f7a3b9" opacity=".9"/><ellipse cx="81" cy="75" rx="5.5" ry="3.2" fill="#f7a3b9" opacity=".9"/><path d="M55 74.5q5 5.5 10 0" fill="none" stroke="#1d0a10" stroke-width="2.8" stroke-linecap="round"/></svg>
+</button>
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 

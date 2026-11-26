@@ -450,9 +450,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 .pol { opacity: 0; transform-origin: 50% 0; }
 .pol.in { animation: swingIn 1s var(--bounce) both; animation-delay: var(--d, 0ms); }
 .pol .polaroid { transform: rotate(var(--r)); }
-@media (hover: hover) {
-  .pol .polaroid:hover { transform: rotate(0deg) scale(1.04); }
-}
+
 
 /* --- Surat --- */
 .paper {
@@ -541,17 +539,16 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 .lb-fig {
   margin: 0; max-width: min(100%, 560px); max-height: 100%;
   display: flex; flex-direction: column; align-items: center;
-  background: #fffdf9; padding: 10px 10px 0;
-  transform: scale(.92) rotate(-2deg); transition: transform .35s var(--bounce);
+  background: #fffdf9; padding: 10px 10px 46px;
+  transform-origin: 50% 50%;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .6);
 }
-.lb.show .lb-fig { transform: none; }
 .lb-fig img {
   display: block; max-width: 100%;
   max-height: calc(100vh - 210px); max-height: calc(100svh - 210px);
   width: auto; height: auto; object-fit: contain;
   user-select: none; -webkit-user-drag: none;
 }
-.lb-fig figcaption { padding: 8px 6px 12px; font-size: 1.5rem; line-height: 1.15; color: var(--ink); text-align: center; }
 .lb-close, .lb-nav {
   position: absolute; z-index: 2;
   width: 46px; height: 46px; border-radius: 50%;
@@ -754,6 +751,115 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 @keyframes marquee { to { transform: translateX(-50%); } }
 @keyframes popB { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.25, 1.15); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
 @keyframes factIn { to { opacity: 1; transform: rotate(var(--rot, -3deg)); } }
+
+
+/* ===================== ANIMASI TAMBAHAN ===================== */
+
+/* Polaroid tanpa tulisan: bingkai bawah tetap lebar seperti polaroid asli */
+.polaroid.nocap { padding-bottom: clamp(26px, 13%, 46px); }
+.ph { position: relative; display: block; overflow: hidden; background: #e4e1db; }
+
+/* Foto "tercetak" pelan-pelan saat muncul, seperti polaroid asli */
+.ph::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(160deg, #dadcd8, #cbcfcc);
+  transition: opacity 1.5s cubic-bezier(.45, 0, .55, 1);
+  transition-delay: calc(var(--d, 0ms) + .55s);
+}
+.ph img {
+  filter: saturate(.1) contrast(.82) brightness(1.15);
+  transition: filter 2s cubic-bezier(.45, 0, .55, 1);
+  transition-delay: calc(var(--d, 0ms) + .55s);
+}
+.in .ph::after { opacity: 0; }
+.in .ph img { filter: none; }
+
+/* Selotip warna-warni */
+.tape-rose::before { background: repeating-linear-gradient(45deg, rgba(233, 183, 195, .9) 0 8px, rgba(212, 142, 162, .85) 8px 16px); transform: rotate(5deg); }
+.tape-gold::before { background: repeating-linear-gradient(45deg, rgba(249, 226, 173, .92) 0 8px, rgba(227, 181, 98, .85) 8px 16px); transform: rotate(-7deg); }
+
+/* Stiker kecil yang "nempel" setelah foto tercetak */
+.pstick {
+  position: absolute; z-index: 3; pointer-events: none;
+  filter: drop-shadow(0 3px 3px rgba(59, 31, 39, .3));
+  transform: scale(0) rotate(-30deg);
+  transition: transform .5s var(--bounce);
+  transition-delay: calc(var(--d, 0ms) + 1.9s);
+}
+.pstick.heart {
+  right: -12px; top: -12px; width: 40px; height: 37px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 72 66'%3E%3Cpath d='M32 55C10 41 3 29 3 19 3 9.5 10 3 18.5 3c6 0 10.8 3 13.5 8 2.7-5 7.5-8 13.5-8C54 3 61 9.5 61 19c0 10-7 22-29 36z' fill='%23a3305d' stroke='%23fff' stroke-width='6' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.pstick.star {
+  left: -12px; top: -10px; width: 38px; height: 38px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 108 108'%3E%3Cpath d='M50 2 62 36 98 38 69 60 79 96 50 75 21 96 31 60 2 38 38 36z' fill='%23e3b562' stroke='%23fff' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.in .pstick.heart { transform: rotate(14deg); }
+.in .pstick.star { transform: rotate(-12deg); }
+
+/* Laptop: polaroid miring 3D mengikuti kursor + kilau */
+@media (hover: hover) and (pointer: fine) {
+  .pol .polaroid {
+    transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) rotate(var(--r)) scale(var(--sc, 1));
+    transition: transform .6s var(--bounce), box-shadow .3s ease;
+  }
+  .pol .polaroid.tilting {
+    --sc: 1.05;
+    transition: transform .12s linear, box-shadow .3s ease;
+    box-shadow: 0 2px 4px rgba(59, 31, 39, .12), 0 32px 50px -18px rgba(59, 31, 39, .55);
+  }
+  .pol .polaroid::after {
+    content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: radial-gradient(circle at var(--gx, 50%) var(--gy, 30%), rgba(255, 255, 255, .5), rgba(255, 255, 255, 0) 55%);
+    mix-blend-mode: soft-light;
+    opacity: 0; transition: opacity .3s ease;
+  }
+  .pol .polaroid.tilting::after { opacity: 1; }
+}
+
+/* Judul: kata latin "tertulis" + garis label memanjang */
+.sec-title em { display: inline-block; clip-path: inset(-35% -14% -45% -14%); }
+.sec-title.reveal em { transition: clip-path 1.15s cubic-bezier(.65, 0, .35, 1) .35s; }
+.sec-title.reveal:not(.in) em { clip-path: inset(-35% 100% -45% -14%); }
+.kicker::before { transform-origin: 100% 50%; }
+.kicker::after { transform-origin: 0 50%; }
+.kicker::before, .kicker::after { transition: transform .8s cubic-bezier(.65, 0, .35, 1) .25s; }
+.kicker.reveal:not(.in)::before, .kicker.reveal:not(.in)::after { transform: scaleX(0); }
+
+/* Prangko di surat "dicapkan" */
+.paper.reveal .postage-wrap { opacity: 0; transform: translate(34px, -34px) rotate(28deg) scale(1.7); transition: opacity .25s ease .6s, transform .55s var(--bounce) .6s; }
+.paper.reveal.in .postage-wrap { opacity: 1; transform: none; }
+
+/* Garis progres emas */
+.progress { position: fixed; left: 0; right: 0; top: 0; height: 3px; z-index: 45; pointer-events: none; opacity: 0; transition: opacity .4s ease; }
+.progress.on { opacity: 1; }
+.progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--g3), var(--g1) 60%, var(--g2)); transform-origin: 0 50%; transform: scaleX(0); }
+
+/* Si Toga pemandu di pojok kiri bawah */
+.guide {
+  position: fixed; left: 10px; bottom: 8px; z-index: 40;
+  width: 58px; padding: 0; border: 0; background: none;
+  cursor: pointer;
+  transform: translateY(150%);
+  transition: transform .55s var(--bounce);
+}
+.guide.on { transform: none; }
+html.noscroll .guide { visibility: hidden; }
+.guide .toga { width: 100%; filter: drop-shadow(0 6px 8px rgba(59, 31, 39, .3)); animation: bob 2.6s ease-in-out infinite; }
+.guide.hop .toga { animation: hop .5s var(--bounce); }
+.guide-bub {
+  position: absolute; left: calc(100% + 6px); bottom: 24px;
+  padding: 7px 12px 8px; border-radius: 14px;
+  background: var(--maroon); color: var(--cream);
+  font: 800 13px/1.2 var(--sans); white-space: nowrap;
+  box-shadow: 0 3px 0 #3e0a1a;
+  opacity: 0; transform: translateX(-8px) scale(.7); transform-origin: 0 50%;
+  transition: opacity .2s ease, transform .35s var(--bounce);
+  pointer-events: none;
+}
+.guide-bub::after { content: ""; position: absolute; left: -7px; top: 50%; margin-top: -7px; border: 7px solid transparent; border-right-color: var(--maroon); border-left: 0; }
+.guide-bub.show { opacity: 1; transform: none; }
+@keyframes hop { 0%, 100% { transform: none; } 40% { transform: translateY(-22px) rotate(-8deg); } 70% { transform: translateY(2px) scale(1.05, .95); } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
