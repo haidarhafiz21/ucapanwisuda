@@ -11,8 +11,8 @@
 
   /* Urutan foto: 0 = hero, 1..6 = album, 7 = penutup */
   const PHOTOS = [
-    { n: 8, pos: '50% 30%', cap: 'ijazah di tangan, lega di hati', alt: 'Berliana memegang map ijazah UIN Madura sambil tersenyum di tangga' },
-    { n: 7, pos: '50% 48%', cap: 'mode happy: ON', alt: 'Berliana berpose ceria di dekat lift dengan selempang nama' },
+    { n: 8, pos: '50% 30%', cap: 'Wisuda Sarjana 2026', alt: 'Berliana memegang map ijazah UIN Madura sambil tersenyum di tangga' },
+    { n: 7, pos: '50% 48%', cap: 'Sarjana Pendidikan', alt: 'Berliana berpose ceria di dekat lift dengan selempang nama' },
     { n: 4, pos: '50% 34%', cap: 'pose anggun, dikit', alt: 'Berliana berdiri anggun dengan kebaya merah muda dan selempang wisuda' },
     { n: 3, pos: '50% 40%', cap: 'ngaca dulu, biar makin cakep', alt: 'Berliana tersenyum di depan cermin dengan dinding roster oranye' },
     { n: 1, pos: '50% 32%', cap: 'satu aja udah cakep, ini dua', alt: 'Berliana dan pantulannya di kaca sambil memegang buket bunga' },
@@ -812,14 +812,32 @@
       url: location.href.split('#')[0],
     };
     if (navigator.share) {
-      try { await navigator.share(data); } catch (e) { /* dibatalkan */ }
-      return;
+      try {
+        await navigator.share(data);
+        return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return; // dibatalkan pengguna
+        // browser bawaan aplikasi (mis. Instagram) kadang menolak: lanjut salin link
+      }
     }
     try {
-      await navigator.clipboard.writeText(data.url);
-      toast('Link sudah disalin');
-    } catch (e) {
-      toast('Salin link dari address bar, ya');
-    }
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(data.url);
+        toast('Link sudah disalin');
+        return;
+      }
+    } catch (e) { /* lanjut ke cara lama */ }
+    // cara lama untuk WebView yang tidak mendukung Clipboard API
+    const ta = document.createElement('textarea');
+    ta.value = data.url;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-1000px;left:0;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, data.url.length);
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch (e) { copied = false; }
+    ta.remove();
+    toast(copied ? 'Link sudah disalin' : 'Link: wisuda.bisnispamekasan.biz.id');
   });
 })();
