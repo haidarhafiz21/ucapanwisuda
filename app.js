@@ -6,6 +6,8 @@
   const rnd = (a, b) => a + Math.random() * (b - a);
   const pick = (arr) => arr[(Math.random() * arr.length) | 0];
   const REDUCE = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // HP spesifikasi rendah: partikel & resolusi kanvas dikurangi supaya tetap mulus
+  const LOW = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 3;
 
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
@@ -81,14 +83,15 @@
     const cv = $('#fx');
     const cx = cv.getContext('2d');
     const COLORS = ['#a3305d', '#e9b7c3', '#6e1630', '#f7c9a0', '#e2793f', '#d9a441', '#d48ea2'];
-    const MAX = REDUCE ? 80 : 420;
+    const MAX = REDUCE ? 80 : LOW ? 240 : 380;
     let W = 0, H = 0;
     let parts = [];
     let raf = 0;
     let last = 0;
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // konfeti tidak butuh resolusi retina penuh: lebih ringan digambar & dipadukan
+      const dpr = Math.min(window.devicePixelRatio || 1, LOW ? 1 : 1.5);
       W = window.innerWidth;
       H = window.innerHeight;
       cv.width = Math.round(W * dpr);
@@ -98,17 +101,18 @@
     resize();
     window.addEventListener('resize', resize, { passive: true });
 
-    const scale = (n) => Math.max(1, Math.round(REDUCE ? n * 0.25 : n));
+    const scale = (n) => Math.max(1, Math.round(REDUCE ? n * 0.25 : LOW ? n * 0.6 : n));
 
     const add = (p) => {
       if (parts.length >= MAX) return;
       p.life = 0;
-      p.rot = p.rot ?? rnd(0, Math.PI * 2);
-      p.vr = p.vr ?? rnd(-0.12, 0.12);
+      if (p.rot === undefined) p.rot = rnd(0, Math.PI * 2);
+      if (p.vr === undefined) p.vr = rnd(-0.12, 0.12);
       p.flip = rnd(0, Math.PI * 2);
       p.flipV = rnd(0.08, 0.2);
       parts.push(p);
       if (!raf) {
+        cv.style.visibility = 'visible';
         last = performance.now();
         raf = requestAnimationFrame(tick);
       }
@@ -227,6 +231,7 @@
       } else {
         raf = 0;
         cx.clearRect(0, 0, W, H);
+        cv.style.visibility = 'hidden';
       }
     };
 
@@ -382,7 +387,7 @@
       wrap.style.setProperty('--d', `${(k % 2) * 110}ms`);
       wrap.innerHTML =
         `<button class="polaroid nocap ${TAPE[k]}" type="button" style="--r:${tilt[k]}deg" aria-label="Buka foto ${idx}: ${p.alt}">` +
-          `<span class="ph"><img src="${small(p)}" srcset="${small(p)} 560w, ${full(p)} 1200w" sizes="(min-width: 720px) 280px, 44vw" ` +
+          `<span class="ph"><img src="${small(p)}" ` +
           `width="560" height="700" loading="lazy" decoding="async" alt="${p.alt}" style="--pos:${p.pos}"></span>` +
           (STICKER[k] ? `<span class="pstick ${STICKER[k]}" aria-hidden="true"></span>` : '') +
         `</button>`;
@@ -390,8 +395,50 @@
       frag.appendChild(wrap);
     });
     grid.appendChild(frag);
+    // siapkan (decode) foto album sebelum terlihat, supaya tidak tersendat saat muncul
+    const imgs = $$('img', grid);
+    const idle = window.requestIdleCallback
+      ? (fn) => window.requestIdleCallback(fn, { timeout: 400 })
+      : (fn) => setTimeout(fn, 120);
+    const warm = () => {
+      imgs.forEach((im) => {
+        im.loading = 'eager';
+        if (im.decode) im.decode().catch(() => {});
+      });
+      // siapkan lapisan polaroid satu per satu saat browser senggang (tidak sekaligus)
+      const pols = $$('.pol', grid);
+      let i = 0;
+      const next = () => {
+        if (i >= pols.length) return;
+        pols[i].classList.add('prep');
+        i += 1;
+        idle(next);
+      };
+      idle(next);
+    };
+    grid.addEventListener('animationend', (e) => {
+      if (e.animationName === 'swingIn') e.target.classList.add('done');
+    });
+    if ('IntersectionObserver' in window) {
+      const pre = new IntersectionObserver((ents) => {
+        if (!ents.some((e) => e.isIntersecting)) return;
+        pre.disconnect();
+        warm();
+      }, { rootMargin: '1400px 0px' });
+      pre.observe(grid);
+    } else {
+      warm();
+    }
   };
   buildGrid();
+
+  /* Mata Si Toga berkedip bareng lewat satu timer (lebih ringan daripada animasi SVG terus-menerus) */
+  const togas = $$('.toga');
+  setInterval(() => {
+    if (document.hidden) return;
+    togas.forEach((t) => t.classList.add('blink'));
+    setTimeout(() => togas.forEach((t) => t.classList.remove('blink')), 150);
+  }, 3800);
 
   /* --- Album di laptop: foto miring 3D mengikuti kursor + kilau --- */
   if (!REDUCE && window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
@@ -490,20 +537,34 @@
      TAMBAHAN: garis progres, pita ikut scroll, Si Toga pemandu
      ========================================================= */
   function startExtras() {
+    // 0) jeda animasi di bagian yang sedang tidak terlihat (hemat baterai & GPU)
+    if ('IntersectionObserver' in window) {
+      const vis = new IntersectionObserver((entries) => {
+        entries.forEach((en) => en.target.classList.toggle('is-off', !en.isIntersecting));
+      }, { rootMargin: '200px 0px' });
+      $$('.hero2, .marquee, .toss, .balloons, .finale').forEach((el) => vis.observe(el));
+    }
+
     // 1) garis progres emas di atas layar
     const prog = $('#progress');
     const bar = $('span', prog);
     let progRaf = 0;
+    let maxScroll = 1;
+    let measuredAt = -1e9;
     const updateProg = () => {
       progRaf = 0;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      const now = performance.now();
+      if (now - measuredAt > 1500) {
+        maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        measuredAt = now;
+      }
+      const p = Math.min(1, Math.max(0, window.scrollY / maxScroll));
       bar.style.transform = `scaleX(${p.toFixed(4)})`;
     };
     prog.classList.add('on');
     updateProg();
     window.addEventListener('scroll', () => { if (!progRaf) progRaf = requestAnimationFrame(updateProg); }, { passive: true });
-    window.addEventListener('resize', () => { if (!progRaf) progRaf = requestAnimationFrame(updateProg); }, { passive: true });
+    window.addEventListener('resize', () => { measuredAt = -1e9; if (!progRaf) progRaf = requestAnimationFrame(updateProg); }, { passive: true });
 
     // 2) pita "Happy Graduation" makin ngebut saat di-scroll, lalu pelan lagi
     const track = $('.marquee-track');
@@ -513,10 +574,15 @@
       let lastT = performance.now();
       let boost = 0;
       let mqRaf = 0;
+      let lastRate = 1;
       const settle = () => {
         boost *= 0.92;
-        if (boost < 0.02) boost = 0;
-        mq.playbackRate = 1 + boost;
+        if (boost < 0.03) boost = 0;
+        const rate = Math.round((1 + boost) * 10) / 10;
+        if (rate !== lastRate) {
+          mq.playbackRate = rate;
+          lastRate = rate;
+        }
         mqRaf = boost > 0 ? requestAnimationFrame(settle) : 0;
       };
       window.addEventListener('scroll', () => {
@@ -756,6 +822,7 @@
   let lbTimer = 0;
   let lbOpen = false;
   const EASE_OUT = 'cubic-bezier(.2, .8, .2, 1)';
+  const cancelAnims = (el) => { if (el.getAnimations) el.getAnimations().forEach((a) => a.cancel()); };
   const canFlip = !REDUCE && typeof lbFig.animate === 'function';
 
   /* polaroid di album untuk foto ke-idx (album berisi PHOTOS[1..6]) */
@@ -792,7 +859,7 @@
 
   function openLightbox(i, from) {
     clearTimeout(lbTimer);
-    lbFig.getAnimations?.().forEach((a) => a.cancel());
+    cancelAnims(lbFig);
     opener = from || null;
     lbOpen = true;
     showPhoto(i);
@@ -836,7 +903,7 @@
     lbTimer = setTimeout(() => {
       lb.hidden = true;
       lbImg.removeAttribute('src');
-      lbFig.getAnimations?.().forEach((a) => a.cancel());
+      cancelAnims(lbFig);
     }, wait);
     if (opener) opener.focus({ preventScroll: true });
   };

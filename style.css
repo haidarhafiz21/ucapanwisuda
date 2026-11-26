@@ -15,7 +15,7 @@
 
   --serif: "Bodoni Moda", Didot, "Bodoni MT", Georgia, serif;
   --display: "Bodoni Moda", Didot, "Bodoni MT", Georgia, serif;
-  --script: "Parisienne", "Segoe Script", cursive;
+  --script: "Pinyon Script", "Segoe Script", cursive;
   --wine: #1d0710;
   --g1: #f9e2ad;
   --g2: #e3b562;
@@ -26,7 +26,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; touch-action: manipulation; }
 html.locked, html.locked body, html.noscroll, html.noscroll body { overflow: hidden; }
 body {
   margin: 0;
@@ -45,7 +45,8 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 .hand { font-family: var(--hand); }
 
 #fx {
-  position: fixed; inset: 0;
+  visibility: hidden;
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
   width: 100%; height: 100%;
   pointer-events: none;
   z-index: 60;
@@ -72,7 +73,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 
 /* ===================== COVER ===================== */
 .cover {
-  position: fixed; inset: 0; z-index: 50;
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 50;
   background: var(--cream);
   display: flex; flex-direction: column;
   overflow: hidden;
@@ -110,7 +111,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   animation: popIn .8s var(--bounce) both .4s, wobble 3.4s ease-in-out 1.6s infinite;
 }
 .envelope > span { position: absolute; display: block; }
-.env-back { inset: 0; background: var(--rose-d); border-radius: 10px; box-shadow: 0 18px 30px -14px rgba(110, 22, 48, .55); }
+.env-back { top: 0; right: 0; bottom: 0; left: 0; background: var(--rose-d); border-radius: 10px; box-shadow: 0 18px 30px -14px rgba(110, 22, 48, .55); }
 .env-letter {
   left: 7%; right: 7%; top: 6%; height: 86%;
   z-index: 2;
@@ -121,11 +122,11 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   color: var(--maroon);
   transition: transform .75s var(--bounce) .4s;
 }
-.env-letter .script { font: 400 1.7rem/1 var(--script); color: var(--berry); }
+.env-letter .script { font: 400 1.95rem/1 var(--script); color: var(--berry); }
 .env-letter b { font: 600 1.45rem/1.1 var(--display); }
 .env-letter .env-heart { position: static; width: 22px; height: 20px; margin-top: 6px; background: var(--berry); -webkit-mask: var(--heart) center / contain no-repeat; mask: var(--heart) center / contain no-repeat; }
 .env-front {
-  inset: 0; z-index: 3;
+  top: 0; right: 0; bottom: 0; left: 0; z-index: 3;
   background: var(--rose);
   border-radius: 10px;
   clip-path: polygon(0 0, 50% 54%, 100% 0, 100% 100%, 0 100%);
@@ -144,7 +145,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, var(--berry), var(--maroon) 72%);
   color: #f3d08b;
-  font: 400 1.9rem/54px var(--script);
+  font: 400 2.1rem/54px var(--script);
   box-shadow: 0 3px 0 #4a0c1f, inset 0 0 0 4px rgba(255, 255, 255, .08);
   transition: transform .35s ease, opacity .35s ease;
 }
@@ -171,16 +172,16 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   background: var(--wine);
   color: var(--cream);
 }
-.h2-photo { position: absolute; inset: 0; z-index: -2; cursor: pointer; }
+.h2-photo { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -2; cursor: pointer; }
 .h2-photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 54% 28%; }
 .h2-shade {
-  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none;
   background:
     linear-gradient(180deg, var(--wine) 0%, rgba(29, 7, 16, .82) 15%, rgba(29, 7, 16, 0) 36%),
     linear-gradient(0deg, var(--wine) 0%, rgba(29, 7, 16, .94) 24%, rgba(29, 7, 16, .5) 40%, rgba(29, 7, 16, 0) 54%),
     radial-gradient(120% 70% at 55% 42%, rgba(29, 7, 16, 0) 45%, rgba(29, 7, 16, .55) 100%);
 }
-.h2-shade::after { content: ""; position: absolute; inset: 0; opacity: .07; mix-blend-mode: overlay; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 220px 220px; }
+.h2-shade::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; opacity: .045; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 220px 220px; }
 
 .h2-happy, .h2-first {
   background: linear-gradient(175deg, var(--g1) 10%, var(--g2) 55%, var(--g3) 95%);
@@ -193,12 +194,9 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   position: relative;
   display: inline-block;
   margin-left: -.06em; padding: 0 .12em .14em .04em;
-  font: 400 clamp(84px, 25vw, 150px)/1 var(--script);
+  font: 400 clamp(88px, 26vw, 160px)/1 var(--script);
   transform: rotate(-6deg); transform-origin: 0 100%;
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, .4));
 }
-.h2-heart { position: absolute; right: -.2em; top: .1em; width: .3em; height: .28em; overflow: visible; }
-.h2-heart path { fill: none; stroke: var(--cream); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
 .h2-grad {
   display: block; margin-top: -.2em;
   font: 500 clamp(29px, 8.4vw, 64px)/1.05 var(--display);
@@ -242,7 +240,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   position: absolute; z-index: 1;
   right: 12px; top: 30%;
   width: 78px; height: 36%;
-  overflow: hidden; border-radius: 4px;
+  overflow: hidden;
   background: #140509;
   transform: rotate(4deg);
   box-shadow: 0 14px 30px rgba(0, 0, 0, .5);
@@ -270,8 +268,10 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   right: 6px; top: calc(66% - 52px);
   width: 84px; height: 84px;
   transform: rotate(10deg);
-  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .45));
 }
+.h2-ring svg { position: absolute; top: 0; left: 0; display: block; width: 100%; height: 100%; overflow: visible; }
+.ring-bg { filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .45)); }
+.ring-txt { animation: spin 14s linear infinite; }
 .h2-toga {
   position: absolute; z-index: 3;
   right: 12px; top: calc(30% - 56px);
@@ -304,8 +304,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 /* urutan animasi setelah amplop dibuka */
 .hero2.go .h2-photo img { animation: heroZoom 2.4s cubic-bezier(.2, .7, .2, 1) both; }
 .hero2.go .h2-happy { animation: writeIn 1.4s cubic-bezier(.65, 0, .35, 1) both .35s; }
-.hero2.go .h2-heart path { animation: drawLine .8s ease-out both 1.6s; }
-.hero2.go .h2-grad .m > span { animation: riseIn .9s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(.95s + var(--i) * 45ms); }
+.hero2.go .hero2.go .h2-grad .m > span { animation: riseIn .9s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(.95s + var(--i) * 45ms); }
 .hero2.go .h2-class i { animation: growX .8s cubic-bezier(.65, 0, .35, 1) both 1.5s; }
 .hero2.go .h2-class span { animation: trackIn 1s cubic-bezier(.16, 1, .3, 1) both 1.6s; }
 .hero2.go .h2-film { animation: filmIn 1.2s cubic-bezier(.16, 1, .3, 1) both 1.2s; }
@@ -324,7 +323,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 /* HP yang pendek (mis. 360x640): rapatkan supaya tidak saling tumpuk */
 @media (max-width: 899px) and (max-height: 700px) {
   .h2-top { padding-top: 46px; }
-  .h2-happy { font-size: 78px; }
+  .h2-happy { font-size: 84px; }
   .h2-quote { display: none; }
   .h2-first { font-size: 64px; }
   .h2-film { top: 29%; height: 30%; }
@@ -342,14 +341,14 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
       linear-gradient(0deg, rgba(29, 7, 16, .75) 0, rgba(29, 7, 16, 0) 28%),
       linear-gradient(180deg, rgba(29, 7, 16, .55) 0, rgba(29, 7, 16, 0) 22%);
   }
-  .h2-top { padding: 0; max-width: 600px; }
-  .h2-bottom { position: relative; left: auto; right: auto; bottom: auto; margin-top: 34px; max-width: 600px; }
-  .h2-happy { font-size: 150px; }
-  .h2-grad { font-size: 64px; }
+  .h2-top { padding: 0; max-width: min(46vw, 760px); }
+  .h2-bottom { position: relative; left: auto; right: auto; bottom: auto; margin-top: 34px; max-width: min(46vw, 760px); }
+  .h2-happy { font-size: clamp(110px, 19vh, 190px); }
+  .h2-grad { font-size: clamp(46px, 8vh, 82px); }
   .h2-class { font-size: 13px; }
-  .h2-quote { max-width: 24em; font-size: 22px; }
-  .h2-first { font-size: 118px; }
-  .h2-rest { font-size: 32px; }
+  .h2-quote { max-width: 24em; font-size: clamp(18px, 2.8vh, 26px); }
+  .h2-first { font-size: clamp(84px, 15vh, 150px); }
+  .h2-rest { font-size: clamp(24px, 4.2vh, 42px); }
   .h2-meta { max-width: none; font-size: 12px; }
   .stamp { font-size: 16px; }
   .h2-film { right: 3vw; top: 18vh; width: 150px; height: 66vh; }
@@ -359,6 +358,50 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   .h2-bub { font-size: 15px; }
 }
 
+
+/* ===================== HP MIRING / LAYAR PENDEK ===================== */
+@media (orientation: landscape) and (max-height: 520px) {
+  /* pembuka: tulisan di kiri, amplop di kanan */
+  .roster-band { height: 22px; }
+  .cover-inner {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-areas: "kick env" "name env" "hint env";
+    align-content: center; justify-content: center; align-items: center;
+    column-gap: 6vw; row-gap: 4px;
+    padding: 6px 24px;
+    text-align: left;
+  }
+  .cover-kicker { grid-area: kick; align-self: end; font-size: 1.25rem; }
+  .cover-name { grid-area: name; margin: 0; font-size: clamp(1.4rem, 4.2vw, 2.1rem); }
+  .envelope { grid-area: env; width: min(40vw, 300px, calc((100vh - 130px) * 1.5)); margin-top: 58px; }
+  .cover-hint { grid-area: hint; align-self: start; margin: 10px 0 0; }
+
+  /* hero: teks kiri, foto kanan, ukuran mengikuti tinggi layar */
+  .hero2 { display: flex; flex-direction: column; justify-content: center; padding: 16px 0 16px 5vw; }
+  .h2-photo { left: auto; width: 56%; }
+  .h2-photo img { object-position: 50% 22%; }
+  .h2-shade {
+    background:
+      linear-gradient(90deg, var(--wine) 0, var(--wine) 44%, rgba(29, 7, 16, .7) 52%, rgba(29, 7, 16, 0) 66%),
+      linear-gradient(0deg, rgba(29, 7, 16, .6) 0, rgba(29, 7, 16, 0) 30%);
+  }
+  .h2-top { padding: 0; max-width: 48vw; }
+  .h2-bottom { position: relative; left: auto; right: auto; bottom: auto; margin-top: 8px; max-width: 48vw; }
+  .h2-happy { font-size: 17vh; }
+  .h2-grad { font-size: 8.4vh; }
+  .h2-class { margin-top: 6px; font-size: 9px; }
+  .h2-quote { display: none; }
+  .h2-first { font-size: 15vh; }
+  .h2-rest { font-size: 5.4vh; gap: 10px; }
+  .stamp { font-size: 11px; }
+  .h2-meta { margin-top: 6px; max-width: none; font-size: 8.5px; }
+  .h2-film { right: 2.5vw; top: 18vh; width: 70px; height: 66vh; }
+  .h2-ring { right: calc(2.5vw + 50px); top: calc(18vh - 30px); width: 64px; height: 64px; }
+  .h2-toga { top: auto; bottom: 4px; right: calc(2.5vw + 84px); width: 54px; }
+  .scroll-hint { display: none; }
+}
+
 /* ===================== POLAROID ===================== */
 .polaroid {
   position: relative; display: block; width: 100%;
@@ -366,7 +409,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   background: #fffdf9;
   cursor: pointer; text-align: center;
   transform: rotate(var(--r, 0deg));
-  box-shadow: 0 1px 2px rgba(59, 31, 39, .12), 0 16px 30px -14px rgba(59, 31, 39, .45);
+  box-shadow: 0 1px 2px rgba(59, 31, 39, .12), 0 12px 20px -10px rgba(59, 31, 39, .42);
   transition: transform .35s var(--bounce);
 }
 .polaroid img {
@@ -409,7 +452,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   color: var(--ink);
 }
 .sec-title em {
-  font: 400 1.3em/.95 var(--script); color: var(--berry);
+  font: 400 1.42em/.95 var(--script); color: var(--berry);
   padding: 0 .06em;
 }
 .sec-text { margin: 12px auto 0; max-width: 34ch; color: var(--ink-soft); }
@@ -427,10 +470,10 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   border-radius: 50%; border: 0;
   background: var(--paper);
   cursor: pointer;
-  box-shadow: 0 6px 0 var(--rose-d), 0 18px 30px -12px rgba(110, 22, 48, .45);
+  box-shadow: 0 6px 0 var(--rose-d), 0 14px 20px -10px rgba(110, 22, 48, .42);
 }
 .cap-btn::after {
-  content: ""; position: absolute; inset: -10px;
+  content: ""; position: absolute; top: -10px; right: -10px; bottom: -10px; left: -10px;
   border-radius: 50%; border: 2px dashed var(--rose-d);
   animation: spin 14s linear infinite;
 }
@@ -449,6 +492,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 @media (min-width: 720px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 44px 34px; } }
 .pol { opacity: 0; transform-origin: 50% 0; }
 .pol.in { animation: swingIn 1s var(--bounce) both; animation-delay: var(--d, 0ms); }
+.pol.prep:not(.done) { will-change: transform, opacity; }
 .pol .polaroid { transform: rotate(var(--r)); }
 
 
@@ -463,7 +507,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
     repeating-linear-gradient(var(--paper) 0 31px, rgba(122, 90, 98, .16) 31px 32px),
     var(--paper);
   background-position: 0 0, 0 44px, 0 0;
-  box-shadow: 0 2px 3px rgba(59, 31, 39, .08), 0 22px 40px -20px rgba(59, 31, 39, .4);
+  box-shadow: 0 2px 3px rgba(59, 31, 39, .08), 0 16px 26px -14px rgba(59, 31, 39, .38);
   rotate: -.8deg;
   font-size: 1.02rem; line-height: 32px;
 }
@@ -481,10 +525,10 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   margin: 34px auto 0;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 6px 0 var(--rose-d), 0 20px 34px -16px rgba(110, 22, 48, .5);
+  box-shadow: 0 6px 0 var(--rose-d), 0 14px 22px -12px rgba(110, 22, 48, .45);
 }
 .scratch-under {
-  position: absolute; inset: 0;
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0;
   padding: 20px 24px;
   display: flex; flex-direction: column; justify-content: center; gap: 8px;
   background: var(--paper);
@@ -492,7 +536,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 .scratch-under p { margin: 0; font-size: 1.45rem; line-height: 1.25; color: var(--maroon); }
 .scratch-under span { font: 800 .8rem var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--berry); }
 #scratchCv {
-  position: absolute; inset: 0; width: 100%; height: 100%;
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%;
   touch-action: none; cursor: grab;
   transition: opacity .6s ease;
 }
@@ -527,7 +571,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 
 /* ===================== LIGHTBOX ===================== */
 .lb {
-  position: fixed; inset: 0; z-index: 70;
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 70;
   display: flex; align-items: center; justify-content: center;
   padding: 60px 12px 70px;
   background: rgba(43, 20, 28, .9);
@@ -641,7 +685,8 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 .toga .tg-happy { display: none; }
 .toga.happy .tg-eyes { display: none; }
 .toga.happy .tg-happy { display: inline; }
-.tg-eyes { transform-box: fill-box; transform-origin: center; animation: blink 4.2s infinite; }
+.tg-eyes { transform-box: fill-box; transform-origin: center; transition: transform .07s ease; }
+.toga.blink .tg-eyes { transform: scaleY(.1); }
 
 .cover-toga {
   top: -66px; right: 3%;
@@ -664,9 +709,6 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   border: 7px solid transparent; border-left-color: #fff; border-right: 0;
 }
 .opening .cover-toga { animation: hopAway .75s cubic-bezier(.5, -0.4, .7, .4) forwards; }
-
-/* Teks berputar di stiker bulat */
-.ring-spin { transform-box: view-box; transform-origin: 50px 50px; animation: spin 14s linear infinite; }
 
 /* Pita berjalan */
 .marquee { overflow: hidden; padding: 28px 0; }
@@ -733,7 +775,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
   -webkit-mask: linear-gradient(#000 0 0) content-box, radial-gradient(circle at center, transparent 3px, #000 3.5px) -5px -5px / 10px 10px;
   mask: linear-gradient(#000 0 0) content-box, radial-gradient(circle at center, transparent 3px, #000 3.5px) -5px -5px / 10px 10px;
 }
-.postage-wrap { position: absolute; top: -46px; right: -12px; z-index: 2; filter: drop-shadow(0 4px 6px rgba(59, 31, 39, .22)); }
+.postage-wrap { position: absolute; top: -46px; right: -12px; z-index: 2; }
 .postage-wrap .postage { position: static; }
 .postage img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 40%; }
 .postage span { display: block; margin-top: 4px; font: 900 .56rem/1 var(--sans); letter-spacing: .1em; text-align: center; color: var(--maroon); }
@@ -761,18 +803,12 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
 
 /* Foto "tercetak" pelan-pelan saat muncul, seperti polaroid asli */
 .ph::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(160deg, #dadcd8, #cbcfcc);
-  transition: opacity 1.5s cubic-bezier(.45, 0, .55, 1);
-  transition-delay: calc(var(--d, 0ms) + .55s);
-}
-.ph img {
-  filter: saturate(.1) contrast(.82) brightness(1.15);
-  transition: filter 2s cubic-bezier(.45, 0, .55, 1);
+  content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none;
+  background: linear-gradient(160deg, rgba(218, 220, 216, .97), rgba(203, 207, 204, .93));
+  transition: opacity 1.6s cubic-bezier(.45, 0, .55, 1);
   transition-delay: calc(var(--d, 0ms) + .55s);
 }
 .in .ph::after { opacity: 0; }
-.in .ph img { filter: none; }
 
 /* Selotip warna-warni */
 .tape-rose::before { background: repeating-linear-gradient(45deg, rgba(233, 183, 195, .9) 0 8px, rgba(212, 142, 162, .85) 8px 16px); transform: rotate(5deg); }
@@ -809,9 +845,8 @@ button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-
     box-shadow: 0 2px 4px rgba(59, 31, 39, .12), 0 32px 50px -18px rgba(59, 31, 39, .55);
   }
   .pol .polaroid::after {
-    content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-    background: radial-gradient(circle at var(--gx, 50%) var(--gy, 30%), rgba(255, 255, 255, .5), rgba(255, 255, 255, 0) 55%);
-    mix-blend-mode: soft-light;
+    content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 2; pointer-events: none;
+    background: radial-gradient(circle at var(--gx, 50%) var(--gy, 30%), rgba(255, 255, 255, .3), rgba(255, 255, 255, 0) 55%);
     opacity: 0; transition: opacity .3s ease;
   }
   .pol .polaroid.tilting::after { opacity: 1; }
@@ -861,9 +896,14 @@ html.noscroll .guide { visibility: hidden; }
 .guide-bub.show { opacity: 1; transform: none; }
 @keyframes hop { 0%, 100% { transform: none; } 40% { transform: translateY(-22px) rotate(-8deg); } 70% { transform: translateY(2px) scale(1.05, .95); } }
 
+/* Animasi dijeda saat bagiannya tidak terlihat (diatur JS) */
+.is-off .h2-film-track, .is-off .ring-txt, .is-off .toga, .is-off .scroll-hint svg, .is-off .marquee-track,
+.is-off .cap-btn::after, .is-off .bl-body { animation-play-state: paused !important; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
     transition-delay: 0s !important;
