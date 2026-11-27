@@ -13,14 +13,14 @@
 
   /* Urutan foto: 0 = hero, 1..6 = album, 7 = penutup */
   const PHOTOS = [
-    { n: 5, pos: '50% 38%', alt: 'Berliana dengan tangan di dada, tersenyum haru' },
+    { n: 8, pos: '50% 30%', alt: 'Berliana memegang map ijazah UIN Madura sambil tersenyum di tangga' },
     { n: 7, pos: '50% 48%', alt: 'Berliana berpose ceria di dekat lift dengan selempang nama' },
     { n: 4, pos: '50% 34%', alt: 'Berliana berdiri anggun dengan kebaya merah muda dan selempang wisuda' },
     { n: 3, pos: '50% 40%', alt: 'Berliana tersenyum di depan cermin dengan dinding roster oranye' },
     { n: 1, pos: '50% 32%', alt: 'Berliana dan pantulannya di kaca sambil memegang buket bunga' },
     { n: 6, pos: '50% 45%', alt: 'Berliana berdiri di tangga sambil memegang pegangan' },
     { n: 2, pos: '50% 48%', alt: 'Pantulan Berliana di cermin wastafel' },
-    { n: 8, pos: '50% 30%', alt: 'Berliana memegang map ijazah UIN Madura sambil tersenyum di tangga' },
+    { n: 5, pos: '50% 38%', alt: 'Berliana dengan tangan di dada, tersenyum haru' },
   ];
   const small = (p) => `foto/${p.n}-s.jpg`;
   const full = (p) => `foto/${p.n}.jpg`;
@@ -526,9 +526,6 @@
     hero.addEventListener('animationend', (e) => {
       if (e.animationName === 'shake') hero.classList.remove('shake');
     });
-    if (window.matchMedia && matchMedia('(min-width: 900px)').matches) {
-      setTimeout(() => say('hai! scroll ke bawah, ya'), 4700);
-    }
     startObserver();
     startExtras();
   }
@@ -645,43 +642,15 @@
     $$('[data-guide]').forEach((el) => sio.observe(el));
   }
 
-  /* --- Hero: ketuk foto = hujan hati, ketuk Si Toga = dia ngomong --- */
-  const heroPhoto = $('#heroPhoto');
-  heroPhoto.addEventListener('click', (e) => {
-    const p = pointFrom(e, heroPhoto);
-    FX.hearts(p.x, p.y, 12);
-    Sound.pop();
-  });
-  const heroToga = $('#heroToga');
-  const heroBub = $('#heroBub');
-  const heroFace = $('.toga', heroToga);
-  const TOGA_LINES = [
-    'hai! aku Si Toga',
-    'scroll ke bawah, ya',
-    'ada balon nunggu dipecahin',
-    'jangan lupa traktirannya, hehe',
-    'selamat ya, Berliana!',
-  ];
-  let togaLine = 0;
-  let bubT = 0;
-  let heroFaceT = 0;
-  function say(msg) {
-    heroBub.textContent = msg;
-    heroBub.classList.remove('show');
-    void heroBub.offsetWidth;
-    heroBub.classList.add('show');
-    clearTimeout(bubT);
-    bubT = setTimeout(() => heroBub.classList.remove('show'), 2600);
-  }
-  heroToga.addEventListener('click', () => {
-    heroFace.classList.add('happy');
-    clearTimeout(heroFaceT);
-    heroFaceT = setTimeout(() => heroFace.classList.remove('happy'), 700);
-    const c = centerOf(heroToga);
-    FX.hearts(c.x, c.y - 10, 8);
-    Sound.pop();
-    say(TOGA_LINES[togaLine % TOGA_LINES.length]);
-    togaLine += 1;
+  /* --- Hero: ketuk strip photobox = "cekrek" lagi (lampu kilat per bingkai) --- */
+  const heroStrip = $('#heroStrip');
+  heroStrip.addEventListener('click', () => {
+    heroStrip.classList.remove('flash');
+    void heroStrip.offsetWidth;
+    heroStrip.classList.add('flash');
+    Sound.tick();
+    const c = centerOf(heroStrip);
+    FX.sparks(c.x, c.y, 8);
   });
 
   /* --- Foto hero & penutup: ketuk = hujan hati --- */
